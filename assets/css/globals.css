@@ -1,3 +1,70 @@
+body {
+    background: linear-gradient(180deg, #fff7fe 0%, #fff7fe 100%);
+    background-attachment: fixed;
+}
+
+.header {
+    border-bottom: 2px solid #D4AF37;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    padding: 5px 20px;
+    display:flex;
+    justify-content: space-between;
+}
+
+.header-left, .header-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+
+.logo-img {
+    width: 70px;
+    height: auto;
+}
+
+.nome {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 1.7rem;
+    color: #4A235A;
+}
+
+.user-img {
+    width: 70px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.carrinho-img {
+    width: 80px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+
+.carrinho-img:hover, .user-img:hover {
+    transform: scale(1.1);
+}
+
+.carrinho-container {
+    position: relative;
+}
+
+#num-carrinho {
+    position: absolute;
+    top: -3px;
+    right: -7px;
+    background-color: #F48FB1;
+    color: white;
+    border-radius: 50%;
+    padding: 2px 7px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
 .hero {
     background-image: url('/assets/imgs/fundo-manifeste.jpg');
     background-repeat: repeat;
