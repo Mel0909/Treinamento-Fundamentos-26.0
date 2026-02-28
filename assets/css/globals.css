@@ -1,9 +1,24 @@
-/*Header*/
+/*Geral*/
 body {
     background: linear-gradient(180deg, #fff7fe 0%, #fff7fe 100%);
     background-attachment: fixed;
 }
 
+body::-webkit-scrollbar {
+    width: 12px;
+}
+
+body::-webkit-scrollbar-track {
+    background: #fff7fe; 
+}
+
+body::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #D4AF37 -10%, #f5d0e7 60%);
+    border-radius: 10px;
+    border: 3px solid #fff7fe;
+}
+
+/*Header*/
 .header {
     border-bottom: 2px solid #D4AF37;
     top: 0;
