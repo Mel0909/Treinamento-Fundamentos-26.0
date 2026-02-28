@@ -8,6 +8,8 @@
     </head>
     <body>
 
+        <div id="notification-container"></div>
+
         <header class="header">
                 <div class="header-left">
                     <img src="assets/imgs/simbolos/logo.png" alt="Logo" class="logo-img">
@@ -15,11 +17,12 @@
                 </div>
 
                 <div class="header-right">
-                    <div class="user">
+                    <div class="user" onclick="abrirModalLogin()">
                         <img src="assets/imgs/simbolos/perfil.png" alt="Perfil" class="user-img">
+                        <span id="user-name" style="color: #4A235A; font-weight: bold;"></span>
                     </div>
                     
-                    <div class="carrinho-container">
+                    <div class="carrinho-container" onclick="abrirModalCarrinho()">
                         <img src="assets/imgs/simbolos/carrinho.png" alt="Carrinho" class="carrinho-img">
                         <span id="num-carrinho">0</span> 
                     </div>
