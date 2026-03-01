@@ -844,3 +844,54 @@ window.addEventListener('keydown', (event) => {
         fecharZoom();
     }
 });
+
+/*Footer*/
+/* === MODAL DA NOSSA HISTÓRIA (COVEN) === */
+function abrirModalHistoria() {
+    const modalHTML = `
+        <div id="modal-historia" class="modal-overlay" onclick="fecharModalHistoria()">
+            
+            <div class="modal-content" onclick="event.stopPropagation()" style="max-width: 650px; text-align: center; padding: 40px; max-height: 85vh; overflow-y: auto;">
+                
+                <button class="close-modal" onclick="fecharModalHistoria()">×</button>
+                
+                <h2 style="font-family: 'Cinzel Decorative', serif; font-size: 1.8rem; color: #4A235A; margin-bottom: 0.5rem;">
+                    O Segredo da Nossa Magia ✨
+                </h2>
+                
+                <h3 style="color: #AB47BC; font-size: 1rem; margin-bottom: 1.5rem; font-weight: normal;">
+                    Projeto Final: Treinamento de Fundamentos - Poli Júnior
+                </h3>
+                
+                <p style="margin-bottom: 1rem; line-height: 1.6; font-size: 1rem; text-align: justify; color: #4A235A;">
+                    Bem-vindo(a) ao nosso coven! Este espaço místico foi cuidadosamente desenvolvido como o projeto final do treinamento de Fundamentos Web da <strong>Poli Júnior</strong>, utilizando os feitiços essenciais de HTML, CSS e JavaScript.
+                </p>
+                
+                <p style="margin-bottom: 1.5rem; line-height: 1.6; font-size: 1rem; text-align: justify; color: #4A235A;">
+                    Embora os elixires, cristais e poções em nossas estantes não sejam itens reais para venda, o propósito deste site é muito verdadeiro: criar uma experiência que traga um toque de encanto e beleza para a sua tela. Afinal, a tecnologia também pode ser um portal para um mundo mais mágico.
+                </p>
+                
+                <p style="font-family: 'Cinzel Decorative', serif; font-size: 1.2rem; color: #D4AF37; font-weight: bold; margin-top: 2rem;">
+                    "A verdadeira alquimia acontece no momento em que você decide cultivar o amor por si mesma." 🌙
+                </p>
+            </div>
+        </div>
+    `;
+
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+}
+
+function fecharModalHistoria() {
+    const modal = document.getElementById('modal-historia');
+    if (modal) {
+        modal.remove(); 
+    }
+}
+
+function assinarGrimorio(event) {
+    event.preventDefault(); 
+    
+    mostrarAviso("O universo registrou seu e-mail! Em breve você receberá nossa magia. ✨");
+    
+    event.target.reset(); 
+}
