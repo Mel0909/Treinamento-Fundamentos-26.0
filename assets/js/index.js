@@ -1,10 +1,4 @@
-/*Menu*/
-function toggleMenu() {
-    const menu = document.getElementById('nav-menu');
-    menu.classList.toggle('active');
-}
-
-/*Notificação*/
+/* Notificação */
 function mostrarAviso(mensagem) {
     const container = document.getElementById('notification-container');
     const toast = document.createElement('div');
@@ -21,7 +15,6 @@ function mostrarAviso(mensagem) {
     }, 3000);
 }
 
-/*Frases*/
 const frases = [
     "O universo preparou algo especial para sua jornada hoje. (Dica: envolve você comprando mimos)",
     "Mercúrio não está mais retrógrado, pode finalizar esse carrinho sem culpa! ✨",
@@ -40,11 +33,10 @@ const frases = [
 function mudarFraseMagica() {
     const elementoFrase = document.getElementById('lucky-phrase');
     const indiceAleatorio = Math.floor(Math.random() * frases.length);
-    
     elementoFrase.innerText = frases[indiceAleatorio];
 }
 
-/*Pesquisa */
+/* Pesquisa e Filtros */
 function filtrarProdutos() {
     const termoBusca = document.getElementById('input-busca').value.toLowerCase();
     
@@ -55,9 +47,7 @@ function filtrarProdutos() {
 
     const filtrados = produtos.filter(produto => {
         const nomeMinusculo = produto.nome.toLowerCase();
-        
         const palavras = nomeMinusculo.split(" ");
-        
         return palavras.some(palavra => palavra.startsWith(termoBusca));
     });
 
@@ -79,7 +69,6 @@ function getIcon(id) {
     return icones[id] || '';
 }
 
-/*Filtros*/
 function abrirModalFiltros() {
     const categoriasIniciais = produtos.map(p => p.categoria);
     const categoriasUnicas = [...new Set(categoriasIniciais)];
@@ -132,9 +121,7 @@ function aplicarFiltros() {
 
     const filtrados = produtos.filter(produto => {
         const passaCategoria = categoriaEscolhida === "todas" || produto.categoria === categoriaEscolhida;
-
         const precoProduto = parseFloat(produto.preco.replace(',', '.'));
-
         const passaPreco = precoProduto >= precoMin && precoProduto <= precoMax;
 
         return passaCategoria && passaPreco;
@@ -152,7 +139,96 @@ function limparFiltros() {
     if(inputBusca) inputBusca.value = ""; 
 }
 
-/*Produtos*/
+/* Backend */
+const MagicAPI = {
+    getProdutos: () => {
+        return produtos;
+    },
+
+    login: (email, senha) => {
+        const listaBruxas = JSON.parse(localStorage.getItem('grimorio_usuarios')) || [];
+        return listaBruxas.find(b => b.email === email && b.senha === senha);
+    },
+
+    cadastrarUsuario: (nome, email, senha) => {
+        let listaBruxas = JSON.parse(localStorage.getItem('grimorio_usuarios')) || [];
+        if (listaBruxas.some(b => b.email === email)) {
+            return { erro: "Este correio mágico já está registrado!" };
+        }
+        const novaBruxa = { nome, email, senha, lista_compras: [] };
+        listaBruxas.push(novaBruxa);
+        localStorage.setItem('grimorio_usuarios', JSON.stringify(listaBruxas));
+        return { sucesso: true, usuario: novaBruxa };
+    },
+
+    getCarrinho: (email) => {
+        const listaBruxas = JSON.parse(localStorage.getItem('grimorio_usuarios')) || [];
+        const bruxa = listaBruxas.find(b => b.email === email);
+        return bruxa ? (bruxa.lista_compras || []) : [];
+    },
+
+    adicionarItem: (email, produto) => {
+        let listaBruxas = JSON.parse(localStorage.getItem('grimorio_usuarios')) || [];
+        const index = listaBruxas.findIndex(b => b.email === email);
+        
+        if (index !== -1) {
+            if (!listaBruxas[index].lista_compras) listaBruxas[index].lista_compras = [];
+            const itemExistente = listaBruxas[index].lista_compras.find(item => item.id === produto.id);
+
+            if (itemExistente) {
+                itemExistente.quantidade = (itemExistente.quantidade || 1) + 1;
+            } else {
+                listaBruxas[index].lista_compras.push({ ...produto, quantidade: 1 });
+            }
+            localStorage.setItem('grimorio_usuarios', JSON.stringify(listaBruxas));
+            return true;
+        }
+        return false;
+    },
+
+    atualizarQuantidadeItem: (email, indexItem, mudanca) => {
+        let listaBruxas = JSON.parse(localStorage.getItem('grimorio_usuarios')) || [];
+        const index = listaBruxas.findIndex(b => b.email === email);
+        
+        if (index !== -1) {
+            let item = listaBruxas[index].lista_compras[indexItem];
+            if (!item.quantidade) item.quantidade = 1;
+            item.quantidade += mudanca;
+
+            if (item.quantidade < 1) {
+                listaBruxas[index].lista_compras.splice(indexItem, 1);
+            }
+            localStorage.setItem('grimorio_usuarios', JSON.stringify(listaBruxas));
+            return true;
+        }
+        return false;
+    },
+
+    removerItem: (email, indexItem) => {
+        let listaBruxas = JSON.parse(localStorage.getItem('grimorio_usuarios')) || [];
+        const userIndex = listaBruxas.findIndex(b => b.email === email);
+        
+        if (userIndex !== -1) {
+            listaBruxas[userIndex].lista_compras.splice(indexItem, 1);
+            localStorage.setItem('grimorio_usuarios', JSON.stringify(listaBruxas));
+            return true;
+        }
+        return false;
+    },
+
+    limparCarrinho: (email) => {
+        let listaBruxas = JSON.parse(localStorage.getItem('grimorio_usuarios')) || [];
+        const index = listaBruxas.findIndex(b => b.email === email);
+        if (index !== -1) {
+            listaBruxas[index].lista_compras = [];
+            localStorage.setItem('grimorio_usuarios', JSON.stringify(listaBruxas));
+            return true;
+        }
+        return false;
+    }
+};
+
+/* Produtos */
 const produtos = [
     {
         id: 1,
@@ -221,7 +297,6 @@ const produtos = [
 ];
 
 function criarCard(produto, tipo) {
-
     if (tipo === 1) {
         return `
             <article class="product-card">
@@ -284,7 +359,6 @@ function carregarProdutos(lista = produtos) {
 
 function abrirZoom(id) {
     const produto = produtos.find(p => p.id === id);
-
     const card = criarCard(produto, 2);
 
     const zoomHTML = `
@@ -304,114 +378,12 @@ function fecharZoom() {
     if (modal) modal.remove();
 }
 
-/*Adicionar ao carrinho*/
-let carrinhoCount = 0;
-
-function adicionarAoCaldeirao(id) {
-    const emailLogado = localStorage.getItem('email_bruxinha');
-    
-    if (!emailLogado) {
-        mostrarAviso("Sintonize sua magia primeiro!");
-        abrirModalLogin();
-        return; 
-    }
-
-    let listaBruxas = JSON.parse(localStorage.getItem('grimorio_usuarios')) || [];
-
-    const index = listaBruxas.findIndex(b => b.email === emailLogado);
-
-    if (index !== -1) {
-        const produtoClicado = produtos.find(p => p.id === id);
-        
-        if (!listaBruxas[index].lista_compras) {
-            listaBruxas[index].lista_compras = [];
-        }
-
-        const itemExistente = listaBruxas[index].lista_compras.find(item => item.id === id);
-
-        if (itemExistente) {
-            itemExistente.quantidade = (itemExistente.quantidade || 1) + 1;
-        } else {
-            listaBruxas[index].lista_compras.push({ ...produtoClicado, quantidade: 1 });
-        }
-
-        localStorage.setItem('grimorio_usuarios', JSON.stringify(listaBruxas));
-        
-        const totalItens = listaBruxas[index].lista_compras.reduce((a, b) => a + (b.quantidade || 1), 0);
-        document.getElementById('num-carrinho').innerText = totalItens;
-
-        mostrarAviso(`${produtoClicado.nome} adicionado! ✨`);
-    }
+/* Perfil */
+function toggleMenu() {
+    const menu = document.getElementById('nav-menu');
+    menu.classList.toggle('active');
 }
 
-function entrarCaldeirao() {
-    const emailInfo = document.getElementById('login-email').value + "@gmail.com";
-    const senhaInfo = document.getElementById('login-senha').value;
-
-    let listaBruxas = JSON.parse(localStorage.getItem('grimorio_usuarios')) || [];
-    
-    const bruxaEncontrada = listaBruxas.find(b => b.email === emailInfo && b.senha === senhaInfo);
-
-    if (bruxaEncontrada) {
-        localStorage.setItem('nome_bruxinha', bruxaEncontrada.nome);
-        localStorage.setItem('email_bruxinha', bruxaEncontrada.email);
-        mostrarAviso(`Bem-vinda de volta, ${bruxaEncontrada.nome}!`);
-        window.location.reload();
-    } else {
-        mostrarAviso("Falha ao sincronizar magia. Palavra mágica ou correio mágicos incorretos. Tente novamente, bruxinha!");
-    }
-}
-
-function salvarBruxinha() {
-    const nome = document.getElementById('reg-nome').value;
-    const emailStr = document.getElementById('reg-email').value;
-    const senha = document.getElementById('reg-senha').value;
-
-    if (!nome || !emailStr || !senha) return mostrarAviso("Preencha todos os campos mágicos!");
-
-    let listaBruxas = JSON.parse(localStorage.getItem('grimorio_usuarios')) || [];
-    
-    if (listaBruxas.some(b => b.email === emailStr + "@gmail.com")) {
-        return mostrarAviso("Este correio mágico já está registrado!");
-    }
-
-    const novaBruxa = {
-        nome: nome,
-        email: emailStr + "@gmail.com",
-        senha: senha,
-        lista_compras: []
-    };
-
-    listaBruxas.push(novaBruxa);
-    localStorage.setItem('grimorio_usuarios', JSON.stringify(listaBruxas));
-    localStorage.setItem('nome_bruxinha', nome);
-    localStorage.setItem('email_bruxinha', emailStr + "@gmail.com");
-
-    mostrarAviso("Grimório criado com sucesso!");
-    window.location.reload();
-}
-
-function carregarCaldeirao() {
-    const emailLogado = localStorage.getItem('email_bruxinha');
-    
-    if (!emailLogado) {
-        document.getElementById('num-carrinho').innerText = "0";
-        return;
-    }
-
-    const listaBruxas = JSON.parse(localStorage.getItem('grimorio_usuarios')) || [];
-    
-    const minhaBruxa = listaBruxas.find(b => b.email === emailLogado);
-    
-    if (minhaBruxa && minhaBruxa.lista_compras) {
-        const totalReal = minhaBruxa.lista_compras.reduce((a, b) => a + (b.quantidade || 1), 0);
-        document.getElementById('num-carrinho').innerText = totalReal;
-    } else {
-        document.getElementById('num-carrinho').innerText = "0";
-    }
-}
-
-/*log in*/
 function abrirModalLogin() {
     const nomeSalvo = localStorage.getItem('nome_bruxinha');
 
@@ -493,17 +465,57 @@ function fluxoLogin() {
     `;
 }
 
+function entrarCaldeirao() {
+    const emailInfo = document.getElementById('login-email').value + "@gmail.com";
+    const senhaInfo = document.getElementById('login-senha').value;
+
+    const bruxaEncontrada = MagicAPI.login(emailInfo, senhaInfo);
+
+    if (bruxaEncontrada) {
+        localStorage.setItem('nome_bruxinha', bruxaEncontrada.nome);
+        localStorage.setItem('email_bruxinha', bruxaEncontrada.email);
+        mostrarAviso(`Bem-vinda de volta, ${bruxaEncontrada.nome}!`);
+        setTimeout(() => window.location.reload(), 1500);
+    } else {
+        mostrarAviso("Falha ao sincronizar magia. Palavra mágica ou correio mágico incorretos.");
+    }
+}
+
+function salvarBruxinha() {
+    const nome = document.getElementById('reg-nome').value;
+    const emailStr = document.getElementById('reg-email').value + "@gmail.com";
+    const senha = document.getElementById('reg-senha').value;
+
+    if (!nome || !document.getElementById('reg-email').value || !senha) return mostrarAviso("Preencha todos os campos mágicos!");
+
+    const resposta = MagicAPI.cadastrarUsuario(nome, emailStr, senha);
+
+    if (resposta.erro) {
+        return mostrarAviso(resposta.erro);
+    }
+
+    localStorage.setItem('nome_bruxinha', resposta.usuario.nome);
+    localStorage.setItem('email_bruxinha', resposta.usuario.email);
+
+    mostrarAviso("Grimório criado com sucesso!");
+    setTimeout(() => window.location.reload(), 1500);
+}
+
 function logout() {
     localStorage.removeItem('nome_bruxinha');
+    localStorage.removeItem('email_bruxinha');
     mostrarAviso("Sua sessão foi encerrada. Até a próxima jornada!");
     fecharModalLogin();
     atualizarNomeUsuario();
+    carregarCaldeirao();
 }
 
 function atualizarNomeUsuario() {
     const spanNome = document.getElementById('user-name');
-    const nomeSalvo = localStorage.getItem('nome_bruxinha');
-    spanNome.innerText = nomeSalvo ? `Oi, ${nomeSalvo}!` : "";
+    if (spanNome) {
+        const nomeSalvo = localStorage.getItem('nome_bruxinha');
+        spanNome.innerText = nomeSalvo ? `Oi, ${nomeSalvo}!` : "";
+    }
 }
 
 function fecharModalLogin() {
@@ -513,7 +525,37 @@ function fecharModalLogin() {
     }
 }
 
-/*Caldeirão*/
+/* Caldeirão */
+function adicionarAoCaldeirao(id) {
+    const emailLogado = localStorage.getItem('email_bruxinha');
+    
+    if (!emailLogado) {
+        mostrarAviso("Sintonize sua magia primeiro!");
+        abrirModalLogin();
+        return; 
+    }
+
+    const produtoClicado = MagicAPI.getProdutos().find(p => p.id === id);
+    
+    if (MagicAPI.adicionarItem(emailLogado, produtoClicado)) {
+        carregarCaldeirao();
+        mostrarAviso(`${produtoClicado.nome} adicionado! ✨`);
+    }
+}
+
+function carregarCaldeirao() {
+    const emailLogado = localStorage.getItem('email_bruxinha');
+    
+    if (!emailLogado) {
+        document.getElementById('num-carrinho').innerText = "0";
+        return;
+    }
+
+    const itens = MagicAPI.getCarrinho(emailLogado);
+    const totalReal = itens.reduce((a, b) => a + (b.quantidade || 1), 0);
+    document.getElementById('num-carrinho').innerText = totalReal;
+}
+
 function abrirModalCarrinho() {
     const emailLogado = localStorage.getItem('email_bruxinha');
     
@@ -523,9 +565,7 @@ function abrirModalCarrinho() {
         return;
     }
 
-    const listaBruxas = JSON.parse(localStorage.getItem('grimorio_usuarios')) || [];
-    const minhaBruxa = listaBruxas.find(b => b.email === emailLogado);
-    const itens = minhaBruxa.lista_compras || [];
+    const itens = MagicAPI.getCarrinho(emailLogado);
 
     let total = 0;
     let listaHTML = "";
@@ -534,9 +574,7 @@ function abrirModalCarrinho() {
         listaHTML = `<p class="empty-msg">Seu caldeirão está vazio e frio... <br> Adicione itens para começar a magia! ✨</p>`;
     } else {
         listaHTML = itens.map((item, index) => {
-
             const qtd = item.quantidade || 1;
-            
             const valorNumerico = parseFloat(item.preco.replace(',', '.'));
             const subtotal = valorNumerico * qtd;
             total += subtotal;
@@ -590,46 +628,21 @@ function abrirModalCarrinho() {
 
 function alterarQuantidade(indexItem, mudanca) {
     const emailLogado = localStorage.getItem('email_bruxinha');
-    let listaBruxas = JSON.parse(localStorage.getItem('grimorio_usuarios')) || [];
-
-    const indexBruxa = listaBruxas.findIndex(b => b.email === emailLogado);
-
-    if (indexBruxa !== -1) {
-        let bruxa = listaBruxas[indexBruxa];
-        let item = bruxa.lista_compras[indexItem];
-
-        if (!item.quantidade) item.quantidade = 1;
-
-        item.quantidade += mudanca;
-
-        if (item.quantidade < 1) {
-            removerDoCaldeirao(indexItem);
-            return;
-        }
-
-        localStorage.setItem('grimorio_usuarios', JSON.stringify(listaBruxas));
-        
-        fecharModalCarrinho();
-        abrirModalCarrinho();
-        carregarCaldeirao(); 
-    }
+    
+    MagicAPI.atualizarQuantidadeItem(emailLogado, indexItem, mudanca);
+    
+    fecharModalCarrinho();
+    abrirModalCarrinho();
+    carregarCaldeirao(); 
 }
 
-function removerDoCaldeirao(index) {
+function removerDoCaldeirao(indexItem) {
     const emailLogado = localStorage.getItem('email_bruxinha');
-    let listaBruxas = JSON.parse(localStorage.getItem('grimorio_usuarios')) || [];
-
-    const userIndex = listaBruxas.findIndex(b => b.email === emailLogado);
-
-    if (userIndex !== -1) {
-        listaBruxas[userIndex].lista_compras.splice(index, 1);
-
-        localStorage.setItem('grimorio_usuarios', JSON.stringify(listaBruxas));
-        
+    
+    if (MagicAPI.removerItem(emailLogado, indexItem)) {
         fecharModalCarrinho();
         abrirModalCarrinho();
         carregarCaldeirao(); 
-        
         mostrarAviso("Item mágico removido do caldeirão! 💨");
     }
 }
@@ -640,31 +653,18 @@ function fecharModalCarrinho() {
 }
 
 function finalizarCompra() {
-    mostrarAviso("Sua encomenda foi enviada para as estrelas! Em breve chegará em sua casa. ✨");
-}
-
-function finalizarCompra() {
     const emailLogado = localStorage.getItem('email_bruxinha');
-    let listaBruxas = JSON.parse(localStorage.getItem('grimorio_usuarios')) || [];
     
-    const index = listaBruxas.findIndex(b => b.email === emailLogado);
-
-    if (index !== -1) {
-        listaBruxas[index].lista_compras = [];
-
-        localStorage.setItem('grimorio_usuarios', JSON.stringify(listaBruxas));
-
+    if (MagicAPI.limparCarrinho(emailLogado)) {
         fecharModalCarrinho();
         carregarCaldeirao();
-        
-        mostrarAviso("Sua encomenda foi enviada para as estrelas! Em breve chegará no seu plano astral. Caldeirão limpo e pronto para a próxima magia. ✨");
+        mostrarAviso("Sua encomenda foi enviada para as estrelas! Caldeirão limpo. ✨");
     } else {
         mostrarAviso("Erro ao processar sua magia. Tente novamente!");
     }
 }
 
-
-/*Carregamento de funções*/
+/* Inicialização */
 window.addEventListener('load', () => {
     const containerLupa = document.getElementById('container-lupa');
     const btnFiltro = document.getElementById('btn-filtro');
