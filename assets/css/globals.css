@@ -159,6 +159,7 @@ body::-webkit-scrollbar-thumb {
 
 .carrinho-container {
     position: relative;
+    cursor: pointer;
 }
 
 #num-carrinho {
