@@ -183,7 +183,7 @@ body::-webkit-scrollbar-thumb {
 
 /* Banner inicial*/
 .hero {
-    background-image: url('assets/imgs/fundo-manifeste.jpg');
+    background-image: url('imgs/fundo-manifeste.jpg');
     background-repeat: repeat;
     background-size: 1600px;
     min-height: 30vh;
