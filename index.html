@@ -11,22 +11,25 @@
         <div id="notification-container"></div>
 
         <header class="header">
-                <div class="header-left">
-                    <img src="assets/imgs/simbolos/logo.png" alt="Logo" class="logo-img">
-                    <h1 class="nome">Self-Love Alchemy</h1>
-                </div>
+            <div class="header-left">
+                <img src="assets/imgs/simbolos/logo.png" alt="Logo" class="logo-img">
+                <h1 class="nome">Self-Love Alchemy</h1>
+            </div>
 
-                <div class="header-right">
-                    <div class="user" onclick="abrirModalLogin()">
-                        <img src="assets/imgs/simbolos/perfil.png" alt="Perfil" class="user-img">
-                        <span id="user-name" style="color: #4A235A; font-weight: bold;"></span>
-                    </div>
-                    
-                    <div class="carrinho-container" onclick="abrirModalCarrinho()">
-                        <img src="assets/imgs/simbolos/carrinho.png" alt="Carrinho" class="carrinho-img">
-                        <span id="num-carrinho">0</span> 
-                    </div>
+            <button class="menu-mobile-btn" onclick="toggleMenu()">☰</button>
+
+            <div class="header-right" id="nav-menu">
+                <div class="user" onclick="abrirModalLogin()">
+                    <img src="assets/imgs/simbolos/perfil.png" alt="Perfil" class="user-img">
+                    <span class="menu-text">Minha Conta</span> 
                 </div>
+                
+                <div class="carrinho-container" onclick="abrirModalCarrinho()">
+                    <img src="assets/imgs/simbolos/carrinho.png" alt="Carrinho" class="carrinho-img">
+                    <span class="menu-text">Meu Caldeirão</span>
+                    <span id="num-carrinho">0</span> 
+                </div>
+            </div>
         </header>
 
         <section class="hero">

@@ -1,20 +1,23 @@
+/*Menu*/
+function toggleMenu() {
+    const menu = document.getElementById('nav-menu');
+    menu.classList.toggle('active'); // Se tiver a classe, tira. Se não tiver, coloca.
+}
+
 /*Notificação*/
 function mostrarAviso(mensagem) {
     const container = document.getElementById('notification-container');
-    
-    // Cria o elemento da notificação
     const toast = document.createElement('div');
     toast.className = 'magical-toast';
     toast.innerHTML = `<span>✨ ${mensagem}</span>`;
     
     container.appendChild(toast);
 
-    // Remove automaticamente após 3 segundos
     setTimeout(() => {
         toast.classList.add('fade-out');
         setTimeout(() => {
             toast.remove();
-        }, 500); // Espera a animação de saída terminar
+        }, 500);
     }, 3000);
 }
 
@@ -47,7 +50,7 @@ const produtos = [
     {
         id: 1,
         nome: "Elixir de Confiança Inabalável",
-        desc: "Perfume para se sentir a dona da magia toda.",
+        desc: "Perfume para se sentir a dona da magia toda. Perfume para se sentir a dona da magia todaPerfume para se sentir a dona da magia todaPerfume para se sentir a dona da magia todaPerfume para se sentir a dona da magia todaPerfume para se sentir a dona da magia todaPerfume para se sentir a dona da magia todaPerfume para se sentir a dona da magia todaPerfume para se sentir a dona da magia todaPerfume para se sentir a dona da magia todaPerfume para se sentir a dona da magia todaPerfume para se sentir a dona da magia todaPerfume para se sentir a dona da magia todaPerfume para se sentir a dona da magia todaPerfume para se sentir a dona da magia todaPerfume para se sentir a dona da magia todaPerfume para se sentir a dona da magia toda",
         preco: "127,00",
         imagem: "assets/imgs/produtos/perfume.png",
         categoria: "Amuletos"
@@ -430,16 +433,17 @@ function abrirModalCarrinho() {
 
                 return `
                     <div class="cart-item">
-                        <img src="${item.imagem}" alt="${item.nome}">
+                        <img src="${item.imagem}" alt="${item.nome}" onclick="fecharModalCarrinho(); abrirZoom(${item.id})" class="cart-item-clickable">
+                        
                         <div class="cart-item-info">
                             <h4>${item.nome}</h4>
                             <p>R$ ${item.preco}</p>
-                        </div>
-                        
-                        <div class="qt-selector">
-                            <button class="qt-btn" onclick="alterarQuantidade(${index}, -1)">−</button>
-                            <span class="qt-number">${qtd}</span>
-                            <button class="qt-btn" onclick="alterarQuantidade(${index}, 1)">+</button>
+
+                            <div class="qt-selector">
+                                <button class="qt-btn" onclick="alterarQuantidade(${index}, -1)">−</button>
+                                <span class="qt-number">${qtd}</span>
+                                <button class="qt-btn" onclick="alterarQuantidade(${index}, 1)">+</button>
+                            </div>
                         </div>
 
                         <button class="remove-btn" onclick="removerDoCaldeirao(${index})">🗑️</button>
