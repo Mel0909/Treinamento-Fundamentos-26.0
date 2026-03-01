@@ -40,6 +40,17 @@
             </div>
         </section>
 
+        <section class="search-filter-container">
+            <div class="search-box">
+                <input type="text" id="input-busca" placeholder="Procurar..." oninput="filtrarProdutos()">
+                <span id="container-lupa" class="search-icon"></span>
+            </div>
+
+            <button class="filter-btn" onclick="abrirModalFiltros()">
+                <span class="filter-icon" id="btn-filtro"></span>
+            </button>
+        </section>
+
         <section class="vitrine-container">
             <div id="product-list" class="product-grid">
                 </div>

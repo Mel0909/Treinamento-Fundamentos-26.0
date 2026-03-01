@@ -1,7 +1,7 @@
 /*Menu*/
 function toggleMenu() {
     const menu = document.getElementById('nav-menu');
-    menu.classList.toggle('active'); // Se tiver a classe, tira. Se não tiver, coloca.
+    menu.classList.toggle('active');
 }
 
 /*Notificação*/
@@ -44,6 +44,113 @@ function mudarFraseMagica() {
     elementoFrase.innerText = frases[indiceAleatorio];
 }
 
+/*Pesquisa */
+function filtrarProdutos() {
+    const termoBusca = document.getElementById('input-busca').value.toLowerCase();
+    
+    if (termoBusca === "") {
+        carregarProdutos(produtos); 
+        return;
+    }
+
+    const filtrados = produtos.filter(produto => {
+        const nomeMinusculo = produto.nome.toLowerCase();
+        
+        const palavras = nomeMinusculo.split(" ");
+        
+        return palavras.some(palavra => palavra.startsWith(termoBusca));
+    });
+
+    carregarProdutos(filtrados);
+}
+
+function getIcon(id) {
+    const icones = {
+        1: `<svg viewBox="0 0 24 24" fill="none" stroke="#f5d0e7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 100%; height: 100%;">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>`,
+
+        2: `<svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round" style="width: 100%; height: 100%;">
+                <path d="M 2,5 C 2,4.45 2.45,4 3,4 H 21 C 21.55,4 22,4.45 22,5 V 7 C 22,7.55 21.55,8 21,8 H 15.5 L 12.5,14 L 12.5,21.5 C 12.5,21.83 12.33,22.13 12.06,22.31 C 11.79,22.49 11.45,22.5 11.16,22.36 L 9.16,21.36 C 8.78,21.17 8.5,20.77 8.5,20.36 V 14 L 5.5,8 H 3 C 2.45,8 2,7.55 2,7 Z" stroke="#D4AF37" stroke-width="2" fill="none" />
+            </svg>`
+    };
+
+    return icones[id] || '';
+}
+
+/*Filtros*/
+function abrirModalFiltros() {
+    const categoriasIniciais = produtos.map(p => p.categoria);
+    const categoriasUnicas = [...new Set(categoriasIniciais)];
+
+    let optionsHTML = `<option value="todas">Todas as Magias</option>`;
+    categoriasUnicas.forEach(cat => {
+        optionsHTML += `<option value="${cat}">${cat}</option>`;
+    });
+
+    const modalHTML = `
+        <div id="modal-filtros" class="modal-overlay" onclick="fecharModalFiltros()">
+            <div class="modal-content" onclick="event.stopPropagation()" style="max-width: 400px;">
+                <button class="close-modal" onclick="fecharModalFiltros()">×</button>
+                <h2 class="modal-title">Filtros Místicos</h2>
+                
+                <div class="form-magico" style="text-align: left; margin-top: 20px;">
+                    <label style="color: #4A235A; font-weight: 600;">Categoria:</label>
+                    <select id="filtro-categoria" class="input-magico" style="margin-bottom: 20px; width: 100%;">
+                        ${optionsHTML}
+                    </select>
+
+                    <label style="color: #4A235A; font-weight: 600;">Faixa de Preço (R$):</label>
+                    <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                        <input type="number" id="filtro-preco-min" class="input-magico" placeholder="Mínimo" min="0">
+                        <input type="number" id="filtro-preco-max" class="input-magico" placeholder="Máximo" min="0">
+                    </div>
+
+                    <button class="register-btn" style="width: 100%;" onclick="aplicarFiltros()">Aplicar Magia</button>
+                    <button class="view-btn" style="width: 100%; margin-top: 10px;" onclick="limparFiltros()">Limpar Filtros</button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+}
+
+function fecharModalFiltros() {
+    const modal = document.getElementById('modal-filtros');
+    if (modal) modal.remove();
+}
+
+function aplicarFiltros() {
+    const categoriaEscolhida = document.getElementById('filtro-categoria').value;
+    const precoMinText = document.getElementById('filtro-preco-min').value;
+    const precoMaxText = document.getElementById('filtro-preco-max').value;
+
+    const precoMin = precoMinText ? parseFloat(precoMinText) : 0;
+    const precoMax = precoMaxText ? parseFloat(precoMaxText) : Infinity;
+
+    const filtrados = produtos.filter(produto => {
+        const passaCategoria = categoriaEscolhida === "todas" || produto.categoria === categoriaEscolhida;
+
+        const precoProduto = parseFloat(produto.preco.replace(',', '.'));
+
+        const passaPreco = precoProduto >= precoMin && precoProduto <= precoMax;
+
+        return passaCategoria && passaPreco;
+    });
+
+    carregarProdutos(filtrados);
+    fecharModalFiltros();
+}
+
+function limparFiltros() {
+    carregarProdutos(produtos);
+    fecharModalFiltros();
+    
+    const inputBusca = document.getElementById('input-busca');
+    if(inputBusca) inputBusca.value = ""; 
+}
 
 /*Produtos*/
 const produtos = [
@@ -162,11 +269,14 @@ function criarCard(produto, tipo) {
     }
 }
 
-function carregarProdutos() {
+function carregarProdutos(lista = produtos) {
     const grid = document.getElementById('product-list');
+    
+    if (!grid) return; 
+
     grid.innerHTML = "";
 
-    produtos.forEach(produto => {
+    lista.forEach(produto => {
         const card = criarCard(produto, 1);
         grid.innerHTML += card;
     });
@@ -556,6 +666,12 @@ function finalizarCompra() {
 
 /*Carregamento de funções*/
 window.addEventListener('load', () => {
+    const containerLupa = document.getElementById('container-lupa');
+    const btnFiltro = document.getElementById('btn-filtro');
+
+    if (containerLupa) containerLupa.innerHTML = getIcon(1);
+    if (btnFiltro) btnFiltro.innerHTML = getIcon(2);
+
     mudarFraseMagica();
     carregarProdutos();
     atualizarNomeUsuario();

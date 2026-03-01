@@ -239,21 +239,96 @@ body::-webkit-scrollbar-thumb {
   background-size: 20px 20px;
   background-position: 0 0, 10px 10px;
 }
+/*Pesquisa*/
+.search-filter-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    padding: clamp(20px, 5vh, 40px) 20px;
+    flex-wrap: wrap;
+}
+
+.search-box {
+    position: relative;
+    width: clamp(250px, 50%, 600px);
+}
+
+.search-box input {
+    width: 100%;
+    padding: 12px 45px 12px 20px;
+    border-radius: 25px;
+    border: 2px solid #D4AF37;
+    background: #fff;
+    font-family: 'Poppins', sans-serif;
+    outline: none;
+    transition: box-shadow 0.3s ease;
+}
+
+.search-box input:focus {
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+}
+
+/* Container da Lupa */
+.search-icon {
+    position: absolute; /* Ela flutua dentro do pai .search-box */
+    right: 15px;        /* Distância da borda direita */
+    top: 50%;           /* Move para o meio */
+    transform: translateY(-50%); /* Ajuste fino para centralizar verticalmente */
+    
+    width: 22px;        /* Tamanho do container */
+    height: 22px;
+    display: flex;
+    align-items: center;
+    pointer-events: none; /* Garante que clicar na lupa clique no input também */
+}
+
+/* Container do Filtro */
+.filter-btn {
+    width: 45px;
+    height: 45px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%; /* Garante que o botão seja um círculo perfeito */
+    background: transparent; /* O botão não precisa de fundo colorido agora, o SVG resolve */
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+/*Filtros*/
+select.input-magico {
+    appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24" fill="none" stroke="%23D4AF37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>');
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 16px;
+    cursor: pointer;
+}
+
+select.input-magico:focus {
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+}
 
 /*Produtos*/
 .vitrine-container {
     max-width: 1200px;
-    margin: 40px auto;
+    margin: 10px auto 10px auto;
     padding: 0 20px;
 }
 
 .product-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
     gap: 30px;
+    justify-content: center;
 }
 
 .product-card {
+    flex: 0 1 calc(25% - 22.5px); 
+    min-width: 240px;
+    max-width: 290px;
     background: rgba(255, 255, 255, 0.6);
     backdrop-filter: blur(10px);
     border-radius: 20px;
@@ -829,7 +904,6 @@ body::-webkit-scrollbar-thumb {
     display: none;
 }
 
-/* --- CONFIGURAÇÃO MOBILE --- */
 @media (max-width: 768px) {
     .header {
         display: flex;
